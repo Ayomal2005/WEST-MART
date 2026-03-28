@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="West Mart Pre-Order Catalog">
+    <title>West Mart | Pre-Order Tactical & EDC Gear</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { DEFAULT: '#8B1A1A', dark: '#5C0E0E' } },
+                    animation: { 
+                        'float': 'float 3s ease-in-out infinite', 
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'marquee': 'marquee 25s linear infinite'
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(100%)' },
+                            '100%': { transform: 'translateX(-100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --brand-red: #8B1A1A; --brand-dark: #5C0E0E; }
+        .bg-brand { background-color: var(--brand-red); }
+        .text-brand { color: var(--brand-red); }
+        .border-brand { border-color: var(--brand-red); }
+        
+        .product-card { transition: all 0.3s ease; cursor: pointer; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+            z-index: 1000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.25s ease; padding: 1rem;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { 
+            background: white; border-radius: 1.5rem; width: 100%; max-width: 900px; 
+            max-height: 90vh; overflow-y: auto; transform: scale(0.95); opacity: 0;
+            transition: all 0.25s ease; box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); opacity: 1; }
+        
+        .login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.92); z-index: 2000; display: flex; 
+            align-items: center; justify-content: center; backdrop-filter: blur(16px);
+        }
+        .login-box { 
+            background: white; border-radius: 2rem; padding: 2rem; width: 90%; max-width: 380px; 
+            text-align: center; box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+        }
+        .login-box input { 
+            width: 100%; padding: 14px; margin: 12px 0; border: 2px solid #e2e8f0; 
+            border-radius: 1rem; font-size: 1rem; transition: all 0.25s;
+        }
+        .login-box input:focus { border-color: var(--brand-red); outline: none; box-shadow: 0 0 0 4px rgba(139,26,26,0.1); }
+        .login-btn { 
+            background: linear-gradient(135deg, var(--brand-red), var(--brand-dark)); 
+            color: white; border: none; padding: 12px; border-radius: 1rem; 
+            font-weight: 700; cursor: pointer; width: 100%; transition: all 0.25s;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(139,26,26,0.4); }
+        
+        .form-input { border: 2px solid #e2e8f0; border-radius: 0.875rem; padding: 12px 16px; transition: all 0.25s; }
+        .form-input:focus { border-color: var(--brand-red); outline: none; box-shadow: 0 0 0 4px rgba(139,26,26,0.1); }
+        
+        .payment-card { border: 2px solid #e2e8f0; border-radius: 1rem; padding: 1rem; cursor: pointer; transition: all 0.3s; }
+        .payment-card.selected { border-color: var(--brand-red); background: #fff5f5; }
+        
+        .floating-wa { animation: float 2.5s ease-in-out infinite; }
+        
+        .logo-img { 
+            width: 80px; height: 80px; object-fit: contain; 
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); 
+            border-radius: 0.75rem; background: transparent;
+        }
+        @media (max-width: 768px) { .logo-img { width: 60px; height: 60px; } }
+        
+        .whatsapp-btn-active {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            box-shadow: 0 10px 30px rgba(37,211,102,0.4);
+        }
+        .whatsapp-btn-disabled { background: #9ca3af; cursor: not-allowed; opacity: 0.7; }
+        
+        .out-of-stock-badge { 
+            position: absolute; top: 10px; right: 10px; background: #dc2626; 
+            color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;
+        }
+        .product-out-of-stock { opacity: 0.7; filter: grayscale(0.3); }
+        
+        .badge-premium { 
+            background: linear-gradient(135deg, #f59e0b, #d97706); 
+            color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+        }
+        
+        .terms-checkbox {
+            width: 20px; height: 20px; border: 2px solid #cbd5e1; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .terms-checkbox:checked { background: var(--brand-red); border-color: var(--brand-red); }
+        
+        .admin-trigger {
+            opacity: 0.3;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        .admin-trigger:hover {
+            opacity: 0.8;
+        }
+        
+        .product-image-container {
+            height: 256px;
+            overflow: hidden;
+        }
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-card-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .product-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Reviews Marquee */
+        .reviews-container {
+            overflow: hidden;
+            position: relative;
+        }
+        .reviews-track {
+            display: flex;
+            animation: marquee 25s linear infinite;
+        }
+        .reviews-track:hover {
+            animation-play-state: paused;
+        }
+        .review-card {
+            flex-shrink: 0;
+            width: 350px;
+            margin: 0 1rem;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+        }
+        .review-stars {
+            color: #fbbf24;
+        }
+        
+        /* Image Gallery Grid */
+        .image-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        .gallery-item {
+            aspect-ratio: 1;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .gallery-item:hover {
+            border-color: var(--brand-red);
+            transform: scale(1.05);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-gray-50 to-gray-100 font-sans text-gray-900">
+
+    <!-- 🔴 RED HERO - SMALLER -->
+    <div class="bg-gradient-to-r from-red-700 via-brand to-red-700 text-white text-center py-1.5 text-xs font-medium shadow-md sticky top-0 z-[100]">
+        <i class="fa-solid fa-shield-halleted mr-1.5"></i>
+        Secure Portal • <span class="font-bold text-amber-300">10% OFF</span> Bank Transfer • Fast Delivery
+    </div>
+
+    <script>
+        // 🔐 SIMPLE PASSWORD (No Hash)
+        const ADMIN_PASSWORD = "Menaka#2005";
+        
+        let bankDiscountPercent = 10;
+        let baseDeliveryFee = 350;
+        
+        function calculateDeliveryFee(weightInKg) {
+            let weight = parseFloat(weightInKg) || 0;
+            if (weight <= 1) {
+                return baseDeliveryFee;
+            } else {
+                const additionalWeight = Math.ceil(weight - 1);
+                return baseDeliveryFee + (additionalWeight * 50);
+            }
+        }
+        
+        // ✅ Products with multiple images
+        let productsCatalog = {
+            "knuckle": { 
+                name: "Tactical Multi-Color Knuckle Tool", 
+                basePrice: 1600, 
+                marketPrice: 2200,
+                weight: "0.2 KG", 
+                dimensions: "11×5×3 cm", 
+                warranty: "No Warranty", 
+                deliveryDays: 3,
+                description: "Versatile self-defense tool with window-breaking capability. Premium alloy construction with ergonomic grip.", 
+                image: "https://i.ibb.co/PZmPXjCW/Gemini-Generated-Image-x6oguwx6oguwx6og.png", 
+                images: [
+                    "https://i.ibb.co/PZmPXjCW/Gemini-Generated-Image-x6oguwx6oguwx6og.png",
+                    "https://placehold.co/400x400/2c3e50/ffffff?text=View+2",
+                    "https://placehold.co/400x400/34495e/ffffff?text=View+3"
+                ],
+                inStock: true 
+            },
+            "tactical-pen": { 
+                name: "Tactical Aerospace Aluminum Pen", 
+                basePrice: 1250, 
+                marketPrice: 1800,
+                weight: "0.08 KG", 
+                dimensions: "14×1.2 cm", 
+                warranty: "6 Months", 
+                deliveryDays: 3,
+                description: "Sleek tactical pen with tungsten steel tip. Writes smoothly, breaks windows in emergencies.", 
+                image: "https://placehold.co/400x400/2c3e50/ffffff?text=Tactical+Pen&font=roboto", 
+                images: [
+                    "https://placehold.co/400x400/2c3e50/ffffff?text=Tactical+Pen&font=roboto",
+                    "https://placehold.co/400x400/34495e/ffffff?text=Pen+2"
+                ],
+                inStock: true 
+            },
+            "edc-card": { 
+                name: "Multi-Tool Survival Card 12-in-1", 
+                basePrice: 990, 
+                marketPrice: 1500,
+                weight: "0.05 KG", 
+                dimensions: "8.5×5.4 cm", 
+                warranty: "No Warranty", 
+                deliveryDays: 3,
+                description: "Credit-card sized multi-tool with 12 functions including bottle opener, wrench, screwdriver.", 
+                image: "https://placehold.co/400x400/34495e/ffffff?text=Survival+Card&font=roboto", 
+                images: [
+                    "https://placehold.co/400x400/34495e/ffffff?text=Survival+Card&font=roboto",
+                    "https://placehold.co/400x400/2c3e50/ffffff?text=Card+2"
+                ],
+                inStock: true 
+            },
+            "flashlight": { 
+                name: "Rechargeable Tactical Flashlight 1000Lm", 
+                basePrice: 2100, 
+                marketPrice: 3200,
+                weight: "0.22 KG", 
+                dimensions: "12×3 cm", 
+                warranty: "1 Year", 
+                deliveryDays: 3,
+                description: "High-powered 1000 lumen flashlight with zoomable focus and USB-C rechargeable battery.", 
+                image: "https://placehold.co/400x400/1e1e2f/ffffff?text=Flashlight&font=roboto", 
+                images: [
+                    "https://placehold.co/400x400/1e1e2f/ffffff?text=Flashlight&font=roboto",
+                    "https://placehold.co/400x400/2c3e50/ffffff?text=Light+2"
+                ],
+                inStock: true 
+            }
+        };
+
+        // ✅ UPDATED: 3 reviews - Mix of English & Sinhala with modern names
+        const customerReviews = [
+            { name: "Zayn K.", rating: 5, text: "Best purchase ever! Quality is insane 🔥", lang: "en" },
+            { name: "නිමේෂ් පෙරේරා", rating: 5, text: "ඉතා හොඳ තත්ත්වයක්! ඉක්මනින් ලැබුණා 💯", lang: "si" },
+            { name: "Kai R.", rating: 5, text: "No cap, this is fire! Totally worth it 💪", lang: "en" }
+        ];
+
+        let selectedProductForOrder = null;
+        let selectedProductKey = null;
+        let adminAuthenticated = false;
+        let failedAttempts = 0;
+        let lockUntil = 0;
+
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            if(!container) return;
+            let html = '';
+            for(const [key, product] of Object.entries(productsCatalog)) {
+                const isOutOfStock = !product.inStock;
+                const deliveryFee = calculateDeliveryFee(product.weight);
+                const marketPrice = product.marketPrice || Math.round(product.basePrice * 1.3);
+                const description = product.description.length > 120 
+                    ? product.description.substring(0, 120) + '...' 
+                    : product.description;
+                const deliveryDays = product.deliveryDays || 3;
+                const images = product.images || [product.image];
+                
+                html += `
+                    <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 ${isOutOfStock ? 'product-out-of-stock' : ''}" data-product-key="${key}">
+                        ${isOutOfStock ? '<div class="out-of-stock-badge"><i class="fa-solid fa-ban mr-1"></i>OUT OF STOCK</div>' : ''}
+                        <div class="grid md:grid-cols-2 gap-0 h-full">
+                            <div class="product-image-container bg-gradient-to-br from-gray-100 to-gray-200 relative">
+                                <img src="${product.image}" alt="${product.name}" 
+                                     onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=West+Mart&font=roboto'; this.onerror=null;">
+                                <div class="absolute top-3 left-3 z-10"><span class="badge-premium"><i class="fa-solid fa-crown mr-1"></i>PREMIUM</span></div>
+                                
+                                <!-- ✅ View All Images Button -->
+                                ${images.length > 1 ? `
+                                <button onclick="openImageGallery('${key}')" 
+                                        class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/95 hover:bg-white text-brand px-4 py-2 rounded-full text-xs font-bold shadow-lg transition-all hover:scale-105 flex items-center gap-2 z-10">
+                                    <i class="fa-solid fa-images"></i>
+                                    View All Images (${images.length})
+                                </button>
+                                ` : ''}
+                            </div>
+                            <div class="p-5 product-card-content">
+                                <h4 class="text-lg font-bold text-gray-800 leading-tight mb-2">${product.name}</h4>
+                                <div class="flex items-baseline gap-2 mb-2">
+                                    <span class="text-brand font-black text-2xl">Rs ${product.basePrice.toLocaleString()}</span>
+                                    <span class="text-gray-400 text-sm line-through">Rs ${marketPrice.toLocaleString()}</span>
+                                </div>
+                                <p class="text-gray-600 text-xs leading-relaxed product-description mb-3">${description}</p>
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="bg-gray-50 p-2 rounded-lg"><p class="text-[10px] text-gray-400">Weight</p><p class="text-xs font-semibold">${product.weight}</p></div>
+                                    <div class="bg-gray-50 p-2 rounded-lg"><p class="text-[10px] text-gray-400">Dimensions</p><p class="text-xs font-semibold">${product.dimensions}</p></div>
+                                </div>
+                                <div class="bg-red-50 p-2.5 rounded-lg mb-3 border border-dashed border-brand/30">
+                                    <span class="text-xs font-semibold">Delivery:</span> <span class="font-bold text-brand">Rs ${deliveryFee}/-</span>
+                                    <span class="text-[10px] text-gray-500 block mt-1">(${deliveryDays} days • First 1kg: Rs 350 • +Rs 50/kg)</span>
+                                </div>
+                                <button onclick="openPreOrderModal('${key}')" ${isOutOfStock ? 'disabled' : ''} class="w-full bg-brand hover:bg-red-700 text-white font-bold py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fa-regular fa-clock mr-2"></i>${isOutOfStock ? 'Out of Stock' : 'Pre-order Now'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+        
+        function openAdminPanel() {
+            if(lockUntil > Date.now()) { 
+                alert(`Too many attempts. Try in ${Math.ceil((lockUntil - Date.now())/1000)} seconds`); 
+                return; 
+            }
+            if(!adminAuthenticated) showAdminLogin();
+            else showAdminModal();
+        }
+        
+        function showAdminLogin() {
+            const existing = document.querySelector('.login-overlay');
+            if(existing) existing.remove();
+            
+            const div = document.createElement('div');
+            div.className = 'login-overlay';
+            div.id = 'admin-login-overlay';
+            div.innerHTML = `
+                <div class="login-box">
+                    <i class="fa-solid fa-shield-halleted text-5xl text-brand mb-3"></i>
+                    <h3 class="text-xl font-bold mb-2">Admin Access</h3>
+                    <input type="password" id="admin-pass" placeholder="Enter password" autocomplete="off">
+                    <button class="login-btn" onclick="checkAdminLogin()"><i class="fa-solid fa-key mr-2"></i>Verify</button>
+                    <p id="admin-error" class="text-red-600 text-sm mt-2 min-h-[20px]"></p>
+                    <button onclick="document.getElementById('admin-login-overlay').remove()" class="text-gray-400 text-sm mt-3 hover:text-gray-600">Cancel</button>
+                </div>
+            `;
+            document.body.appendChild(div);
+            
+            const input = document.getElementById('admin-pass');
+            input.addEventListener('keypress', e => { 
+                if(e.key === 'Enter') checkAdminLogin(); 
+            });
+            setTimeout(() => input.focus(), 100);
+        }
+        
+        function checkAdminLogin() {
+            const input = document.getElementById('admin-pass');
+            const pass = input?.value || '';
+            const errorEl = document.getElementById('admin-error');
+            
+            if(pass === ADMIN_PASSWORD) {
+                adminAuthenticated = true;
+                sessionStorage.setItem('westmart_admin', 'true');
+                document.getElementById('admin-login-overlay').remove();
+                showAdminModal();
+                alert('✅ Access granted!');
+            } else {
+                failedAttempts++;
+                const remaining = 3 - failedAttempts;
+                errorEl.textContent = `❌ Access denied (${remaining} attempts left)`;
+                input.value = '';
+                input.focus();
+                
+                if(failedAttempts >= 3) {
+                    lockUntil = Date.now() + 30000;
+                    errorEl.textContent = '🔒 Locked for 30 seconds';
+                    input.disabled = true;
+                    setTimeout(() => { 
+                        failedAttempts = 0; 
+                        lockUntil = 0;
+                        if(input) input.disabled = false;
+                    }, 30000);
+                }
+            }
+        }
+        
+        function showAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            if(modal) {
+                modal.classList.add('active');
+                loadAdminProducts();
+            }
+        }
+        
+        function loadAdminProducts() {
+            const tbody = document.getElementById('admin-products-table');
+            if(!tbody) return;
+            let html = '';
+            for(const [k,p] of Object.entries(productsCatalog)) {
+                const marketPrice = p.marketPrice || Math.round(p.basePrice * 1.3);
+                html += `<tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 text-xs font-mono text-gray-500">${k}</td>
+                    <td class="p-3 text-sm font-medium">${p.name.substring(0,20)}${p.name.length>20?'..':''}</td>
+                    <td class="p-3 text-sm font-semibold text-brand">Rs ${p.basePrice.toLocaleString()}</td>
+                    <td class="p-3 text-xs text-gray-500 line-through">Rs ${marketPrice.toLocaleString()}</td>
+                    <td class="p-3 text-xs">${p.deliveryDays || 3} days</td>
+                    <td class="p-3"><span class="px-3 py-1 rounded-full text-xs font-medium ${p.inStock?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${p.inStock?'✅ In Stock':'❌ Out'}</span></td>
+                    <td class="p-3 space-x-2">
+                        <button onclick="toggleStock('${k}')" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">${p.inStock?'Mark Out':'Mark In'}</button>
+                        <button onclick="deleteProduct('${k}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">Delete</button>
+                    </td>
+                </tr>`;
+            }
+            tbody.innerHTML = html || '<tr><td colspan="7" class="p-4 text-center text-gray-500">No products</td></tr>';
+        }
+        
+        function toggleStock(k) {
+            if(!adminAuthenticated) { alert('Access denied'); return; }
+            productsCatalog[k].inStock = !productsCatalog[k].inStock;
+            renderProducts();
+            loadAdminProducts();
+            localStorage.setItem('westmart_products', JSON.stringify(productsCatalog));
+            alert(`"${productsCatalog[k].name}" marked as ${productsCatalog[k].inStock ? 'In Stock' : 'Out of Stock'}`);
+        }
+        
+        function deleteProduct(k) {
+            if(!adminAuthenticated) { alert('Access denied'); return; }
+            if(confirm(`⚠️ Delete "${productsCatalog[k]?.name}"?\n\nThis cannot be undone.`)) {
+                delete productsCatalog[k];
+                renderProducts();
+                loadAdminProducts();
+                localStorage.setItem('westmart_products', JSON.stringify(productsCatalog));
+                alert('Product deleted!');
+            }
+        }
+        
+        function addProduct() {
+            if(!adminAuthenticated) { alert('Access denied'); return; }
+            const name = document.getElementById('new-name').value.trim();
+            const price = parseInt(document.getElementById('new-price').value);
+            const marketPrice = parseInt(document.getElementById('new-market-price').value) || Math.round(price * 1.3);
+            const weight = document.getElementById('new-weight').value.trim() || "0.2 KG";
+            const dimensions = document.getElementById('new-dimensions').value.trim() || "10×5 cm";
+            const deliveryDays = parseInt(document.getElementById('new-delivery-days').value) || 3;
+            const desc = document.getElementById('new-desc').value.trim();
+            const img = document.getElementById('new-image').value.trim();
+            const imagesInput = document.getElementById('new-images').value.trim();
+            const images = imagesInput ? imagesInput.split(',').map(url => url.trim()).filter(url => url) : [];
+            
+            if(!name || !price || !desc) { 
+                alert('⚠️ Please fill Name, Price and Description'); 
+                return; 
+            }
+            
+            const key = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').substring(0,20);
+            productsCatalog[key] = {
+                name, 
+                basePrice: price, 
+                marketPrice: marketPrice,
+                weight: weight,
+                dimensions: dimensions,
+                deliveryDays: deliveryDays,
+                warranty: "No Warranty", 
+                description: desc,
+                image: img || "https://placehold.co/400x400/e2e8f0/64748b?text=New+Product&font=roboto", 
+                images: images.length > 0 ? [img || "https://placehold.co/400x400/e2e8f0/64748b?text=New+Product", ...images].slice(0, 3) : [img || "https://placehold.co/400x400/e2e8f0/64748b?text=New+Product"],
+                inStock: true
+            };
+            
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-market-price').value = '';
+            document.getElementById('new-weight').value = '';
+            document.getElementById('new-dimensions').value = '';
+            document.getElementById('new-delivery-days').value = '';
+            document.getElementById('new-desc').value = '';
+            document.getElementById('new-image').value = '';
+            document.getElementById('new-images').value = '';
+            
+            renderProducts();
+            loadAdminProducts();
+            localStorage.setItem('westmart_products', JSON.stringify(productsCatalog));
+            alert(`✅ "${name}" added to catalog!`);
+        }
+        
+        function saveDiscount() {
+            if(!adminAuthenticated) { alert('Access denied'); return; }
+            const val = parseInt(document.getElementById('discount-input').value);
+            if(val >= 0 && val <= 100) {
+                bankDiscountPercent = val;
+                localStorage.setItem('westmart_discount', val);
+                document.getElementById('discount-display').textContent = val + '%';
+                document.querySelectorAll('.discount-percent').forEach(el => {
+                    el.textContent = val + '% OFF';
+                });
+                alert(`✅ Discount set to ${val}%`);
+            } else {
+                alert('⚠️ Enter value between 0-100');
+            }
+        }
+        
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.remove('active');
+        }
+        
+        function openPreOrderModal(key) {
+            const product = productsCatalog[key];
+            if(!product) { alert('Product not found!'); return; }
+            if(!product.inStock) { alert('This product is out of stock!'); return; }
+            
+            selectedProductKey = key;
+            selectedProductForOrder = product;
+            const deliveryFee = calculateDeliveryFee(product.weight);
+            
+            document.getElementById('modal-product-name').textContent = product.name;
+            document.getElementById('modal-product-price').innerHTML = `Rs ${product.basePrice.toLocaleString()}`;
+            document.getElementById('modal-product-desc').textContent = product.description;
+            document.getElementById('modal-weight').textContent = product.weight;
+            document.getElementById('modal-dimensions').textContent = product.dimensions;
+            document.getElementById('modal-delivery').textContent = `${product.deliveryDays || 3} Days`;
+            document.getElementById('modal-delivery-fee').innerHTML = `Rs ${deliveryFee}/-`;
+            
+            document.getElementById('order-form').reset();
+            document.getElementById('qty-input').value = 1;
+            document.getElementById('payment-cod').checked = true;
+            document.getElementById('confirm-terms').checked = false;
+            
+            updatePaymentSelection();
+            updatePriceSummary();
+            toggleSubmitButton();
+            
+            document.getElementById('preorder-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            setTimeout(() => document.getElementById('customer-name')?.focus(), 300);
+        }
+        
+        // ✅ Open Image Gallery Modal
+        function openImageGallery(key) {
+            const product = productsCatalog[key];
+            if(!product) return;
+            
+            const modal = document.getElementById('image-gallery-modal');
+            const container = document.getElementById('gallery-images-container');
+            const title = document.getElementById('gallery-product-title');
+            
+            if(modal && container && title) {
+                title.textContent = product.name;
+                const images = product.images || [product.image];
+                
+                let html = '';
+                images.forEach((img, idx) => {
+                    html += `
+                        <div class="gallery-item" onclick="openImageViewer('${img}')">
+                            <img src="${img}" alt="${product.name} ${idx + 1}" 
+                                 onerror="this.src='https://placehold.co/400x400/e2e8f0/64748b?text=Image+${idx + 1}'">
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                modal.classList.add('active');
+            }
+        }
+        
+        // ✅ Open Single Image Viewer
+        function openImageViewer(imageSrc) {
+            const modal = document.getElementById('image-viewer-modal');
+            const img = document.getElementById('viewer-image');
+            if(modal && img) {
+                img.src = imageSrc;
+                modal.classList.add('active');
+            }
+        }
+        
+        function closeImageGallery() {
+            document.getElementById('image-gallery-modal')?.classList.remove('active');
+        }
+        
+        function closeImageModal() {
+            document.getElementById('image-viewer-modal')?.classList.remove('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('preorder-modal').classList.remove('active');
+            document.body.style.overflow = '';
+            selectedProductForOrder = null;
+            selectedProductKey = null;
+        }
+        
+        function updatePaymentSelection() {
+            const codCard = document.getElementById('cod-card');
+            const bankCard = document.getElementById('bank-card');
+            const codRadio = document.getElementById('payment-cod');
+            
+            if(codRadio?.checked) {
+                codCard?.classList.add('selected');
+                bankCard?.classList.remove('selected');
+            } else {
+                bankCard?.classList.add('selected');
+                codCard?.classList.remove('selected');
+            }
+            updatePriceSummary();
+        }
+        
+        function updatePriceSummary() {
+            const qty = parseInt(document.getElementById('qty-input').value) || 1;
+            const pm = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cod';
+            const p = selectedProductForOrder;
+            if(!p) return;
+            
+            const df = calculateDeliveryFee(p.weight);
+            let total = 0, html = '';
+            
+            if(pm === 'bank') {
+                const discounted = Math.round(p.basePrice * (1 - bankDiscountPercent/100));
+                total = (discounted * qty) + df;
+                html = `<div class="space-y-2 text-sm">
+                    <div class="flex justify-between"><span>🏷️ Item Price (${bankDiscountPercent}% OFF):</span><span class="font-bold">Rs ${discounted} × ${qty}</span></div>
+                    <div class="flex justify-between"><span>🚚 Delivery:</span><span class="font-bold">Rs ${df}</span></div>
+                    <div class="flex justify-between pt-2 border-t border-gray-600 text-lg font-bold"><span>Total:</span><span class="text-amber-400">Rs ${total.toLocaleString()}</span></div>
+                    <div class="text-xs text-green-300 mt-2 bg-green-900/30 p-3 rounded border border-green-700/50">
+                        <i class="fa-solid fa-circle-info mr-2"></i>
+                        <strong>Full payment via Bank Transfer required</strong><br>
+                        <span class="opacity-90">Payment details will be sent via WhatsApp after pre-order submission. Upload payment slip to confirm your order.</span>
+                    </div>
+                </div>`;
+            } else {
+                total = (p.basePrice * qty) + df;
+                html = `<div class="space-y-2 text-sm">
+                    <div class="flex justify-between"><span>🏷️ Item Price:</span><span class="font-bold">Rs ${p.basePrice} × ${qty}</span></div>
+                    <div class="flex justify-between"><span>🚚 Delivery:</span><span class="font-bold">Rs ${df}</span></div>
+                    <div class="flex justify-between pt-2 border-t border-gray-600 text-lg font-bold"><span>Total (COD):</span><span class="text-brand">Rs ${total.toLocaleString()}</span></div>
+                    <div class="text-xs text-amber-200 mt-2 bg-amber-900/20 p-3 rounded border border-amber-700/50">
+                        <i class="fa-solid fa-circle-info mr-2"></i>
+                        <strong>Pay Rs ${df} upfront to confirm</strong><br>
+                        <span class="opacity-90">Payment details will be sent via WhatsApp after pre-order. Upload payment slip, then balance payable on delivery.</span>
+                    </div>
+                </div>`;
+            }
+            document.getElementById('summary-content').innerHTML = html;
+        }
+        
+        function toggleSubmitButton() {
+            const cb = document.getElementById('confirm-terms');
+            const btn = document.getElementById('submit-btn');
+            if(!cb || !btn) return;
+            
+            if(cb.checked && selectedProductForOrder) {
+                btn.disabled = false;
+                btn.classList.remove('whatsapp-btn-disabled');
+                btn.classList.add('whatsapp-btn-active');
+            } else {
+                btn.disabled = true;
+                btn.classList.remove('whatsapp-btn-active');
+                btn.classList.add('whatsapp-btn-disabled');
+            }
+        }
+        
+        function submitOrder(e) {
+            e.preventDefault();
+            if(!selectedProductForOrder) { alert('Error: Product information missing'); return; }
+            
+            const name = document.getElementById('customer-name').value.trim();
+            const phone = document.getElementById('whatsapp-phone').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const qty = parseInt(document.getElementById('qty-input').value) || 1;
+            const pm = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cod';
+            
+            if(!name || name.length < 2) { alert('⚠️ Please enter your full name'); return; }
+            if(!phone || phone.length < 10) { alert('⚠️ Please enter a valid phone number'); return; }
+            if(!city) { alert('⚠️ Please enter your city'); return; }
+            if(!address || address.length < 10) { alert('⚠️ Please enter a complete address'); return; }
+            
+            const p = selectedProductForOrder;
+            const df = calculateDeliveryFee(p.weight);
+            let total = 0, paymentText = '';
+            
+            if(pm === 'bank') {
+                const disc = Math.round(p.basePrice * (1 - bankDiscountPercent/100));
+                total = (disc * qty) + df;
+                paymentText = `🟢 *Bank Transfer (${bankDiscountPercent}% OFF)*
+• Item Price: Rs ${disc} × ${qty} = Rs ${disc*qty}
+• Delivery Charge: Rs ${df}
+• *TOTAL TO PAY: Rs ${total}*
+
+📌 *PAYMENT INSTRUCTIONS:*
+1. We will send bank details via WhatsApp
+2. Make full payment of Rs ${total}
+3. Upload payment slip to confirm order
+4. Order will be processed after verification`;
+            } else {
+                total = (p.basePrice * qty) + df;
+                paymentText = `🟡 *Cash on Delivery*
+• Item Price: Rs ${p.basePrice} × ${qty} = Rs ${p.basePrice*qty}
+• Delivery Charge: Rs ${df}
+• *TOTAL: Rs ${total}*
+
+📌 *PAYMENT INSTRUCTIONS:*
+1. We will send bank details via WhatsApp
+2. Pay Rs ${df} (delivery charge) upfront
+3. Upload payment slip to confirm order
+4. Balance Rs ${p.basePrice*qty} payable on delivery`;
+            }
+            
+            const msg = `🛒 *WEST MART PRE-ORDER*
+━━━━━━━━━━━━━━━━━━━━━━
+👤 *Customer:* ${name}
+📱 *WhatsApp:* ${phone}
+🏙️ *City:* ${city}
+📍 *Address:* ${address}
+
+📦 *Product:* ${p.name}
+🔢 *Quantity:* ${qty}
+⚖️ *Weight:* ${p.weight}
+📏 *Dimensions:* ${p.dimensions}
+
+💰 *PAYMENT DETAILS:*
+${paymentText}
+
+━━━━━━━━━━━━━━━━━━━━━━
+📎 *Next Steps:*
+1. Wait for bank details via WhatsApp
+2. Make payment & upload slip
+3. Order confirmed after verification
+
+Thank you for choosing West Mart! 🙏`;
+            
+            window.open(`https://wa.me/94757424674?text=${encodeURIComponent(msg)}`, '_blank');
+            closeModal();
+            alert('✅ Pre-order sent to WhatsApp! Check your messages for payment details.');
+        }
+        
+        function renderReviews() {
+            const track = document.getElementById('reviews-track');
+            if(!track) return;
+            
+            let html = '';
+            // Duplicate reviews for seamless loop
+            const allReviews = [...customerReviews, ...customerReviews, ...customerReviews];
+            
+            allReviews.forEach(review => {
+                const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                html += `
+                    <div class="review-card">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-sm">
+                                ${review.name.charAt(0)}
+                            </div>
+                            <div>
+                                <p class="font-semibold text-sm text-gray-800">${review.name}</p>
+                                <div class="review-stars text-xs">${stars}</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 leading-relaxed">${review.text}</p>
+                    </div>
+                `;
+            });
+            
+            track.innerHTML = html;
+        }
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            if(sessionStorage.getItem('westmart_admin') === 'true') {
+                adminAuthenticated = true;
+            }
+            
+            const savedProducts = localStorage.getItem('westmart_products');
+            if(savedProducts) { 
+                try { 
+                    productsCatalog = { ...productsCatalog, ...JSON.parse(savedProducts) }; 
+                } catch(e) { console.error('Failed to load products:', e); }
+            }
+            
+            const savedDiscount = localStorage.getItem('westmart_discount');
+            if(savedDiscount) {
+                bankDiscountPercent = parseInt(savedDiscount) || 10;
+            }
+            
+            renderProducts();
+            renderReviews();
+            document.getElementById('discount-display').textContent = bankDiscountPercent + '%';
+            
+            document.getElementById('qty-input')?.addEventListener('input', updatePriceSummary);
+            document.querySelectorAll('input[name="paymentMethod"]').forEach(r => 
+                r.addEventListener('change', updatePaymentSelection)
+            );
+            document.getElementById('confirm-terms')?.addEventListener('change', toggleSubmitButton);
+            
+            document.getElementById('preorder-modal')?.addEventListener('click', e => { 
+                if(e.target.id === 'preorder-modal') closeModal(); 
+            });
+            document.getElementById('admin-modal')?.addEventListener('click', e => { 
+                if(e.target.id === 'admin-modal') closeAdminModal(); 
+            });
+            document.getElementById('image-viewer-modal')?.addEventListener('click', e => { 
+                if(e.target.id === 'image-viewer-modal') closeImageModal(); 
+            });
+            document.getElementById('image-gallery-modal')?.addEventListener('click', e => { 
+                if(e.target.id === 'image-gallery-modal') closeImageGallery(); 
+            });
+            
+            document.getElementById('search-input')?.addEventListener('input', e => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const key = card.getAttribute('data-product-key');
+                    const product = productsCatalog[key];
+                    if(product) {
+                        const match = product.name.toLowerCase().includes(term) || 
+                                      product.description.toLowerCase().includes(term);
+                        card.style.display = match ? 'block' : 'none';
+                    }
+                });
+            });
+            
+            document.addEventListener('keydown', e => {
+                if(e.key === 'Escape') {
+                    closeModal();
+                    closeAdminModal();
+                    closeImageModal();
+                    closeImageGallery();
+                }
+            });
+        });
+    </script>
+
+    <!-- Header -->
+    <header class="bg-brand text-white shadow-lg sticky top-6 z-50">
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <img src="https://iili.io/qbylEzb.md.jpg" alt="West Mart" class="logo-img" onerror="this.style.display='none'">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-black">WEST MART</h1>
+                        <p class="text-xs tracking-wider opacity-90">YOUR TRUST - OUR VALUE</p>
+                    </div>
+                </div>
+                <div class="w-full md:w-72 relative">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="search-input" placeholder="Search products..." class="w-full pl-9 pr-3 py-2 rounded-full text-sm text-gray-800 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-brand/50">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Delivery Info Bar -->
+    <div class="bg-gradient-to-r from-brand-dark to-brand text-white py-2 text-center text-xs font-medium sticky top-[54px] z-40">
+        <i class="fa-solid fa-truck-fast mr-2"></i>Delivery: 1kg Rs 350 • +Rs 50/kg • Bank Transfer: <span id="discount-display" class="font-bold">10%</span> OFF
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl md:text-3xl font-black border-l-4 border-brand pl-4"><i class="fa-solid fa-fire text-amber-400 mr-2"></i>Pre-Order Collection</h2>
+            <span class="bg-green-100 text-green-700 text-xs font-bold px-4 py-2 rounded-full"><i class="fa-solid fa-bolt mr-1"></i>Limited Stock</span>
+        </div>
+        <div id="products-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto"></div>
+        
+        <!-- ✅ Animated Customer Reviews Bar (3 Reviews - English & Sinhala) -->
+        <div class="mt-16 mb-8">
+            <h3 class="text-2xl font-black text-center mb-6 text-brand">
+                <i class="fa-solid fa-heart mr-2"></i>What Our Customers Say
+            </h3>
+            <div class="reviews-container bg-gradient-to-r from-gray-50 to-gray-100 py-6 rounded-2xl">
+                <div id="reviews-track" class="reviews-track flex gap-4">
+                    <!-- Reviews loaded via JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pre-Order Modal -->
+    <div id="preorder-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="bg-gradient-to-r from-brand-dark to-brand text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
+                <h3 class="text-xl font-bold"><i class="fa-solid fa-cart-shopping mr-2"></i>Complete Pre-Order</h3>
+                <button onclick="closeModal()" class="text-white text-2xl hover:opacity-80">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="bg-gray-50 p-4 rounded-xl mb-5 border-l-4 border-brand">
+                    <h4 class="font-bold text-lg" id="modal-product-name"></h4>
+                    <p class="text-2xl font-black text-brand mt-1" id="modal-product-price"></p>
+                    <p class="text-sm text-gray-600 mt-2" id="modal-product-desc"></p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3 text-xs">
+                        <span><i class="fa-solid fa-weight-hanging mr-1 text-brand"></i><span id="modal-weight"></span></span>
+                        <span><i class="fa-solid fa-ruler-combined mr-1 text-brand"></i><span id="modal-dimensions"></span></span>
+                        <span><i class="fa-solid fa-truck mr-1 text-brand"></i><span id="modal-delivery"></span></span>
+                        <span class="font-bold text-brand"><i class="fa-solid fa-truck-fast mr-1"></i><span id="modal-delivery-fee"></span></span>
+                    </div>
+                </div>
+                
+                <form id="order-form" onsubmit="submitOrder(event)" class="space-y-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <input type="text" id="customer-name" placeholder="Full Name *" class="form-input w-full" required>
+                        <input type="tel" id="whatsapp-phone" placeholder="WhatsApp Number *" class="form-input w-full" required>
+                        <input type="text" id="city" placeholder="City *" class="form-input w-full" required>
+                        <input type="text" id="alt-phone" placeholder="Alt Phone (Optional)" class="form-input w-full">
+                    </div>
+                    <textarea id="address" placeholder="Delivery Address *" rows="2" class="form-input w-full" required></textarea>
+                    
+                    <div class="flex items-center gap-3">
+                        <label class="font-semibold text-sm">Quantity:</label>
+                        <input type="number" id="qty-input" min="1" value="1" class="form-input w-20 text-center" required>
+                    </div>
+                    
+                    <div>
+                        <p class="font-semibold text-sm mb-3"><i class="fa-solid fa-credit-card mr-1"></i>Payment Method</p>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div id="cod-card" class="payment-card selected" onclick="document.getElementById('payment-cod').checked=true; updatePaymentSelection();">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="paymentMethod" value="cod" id="payment-cod" checked onchange="updatePaymentSelection()">
+                                    <div><i class="fa-solid fa-money-bill-wave text-xl text-brand"></i><p class="font-bold text-sm">Cash on Delivery</p><p class="text-xs text-gray-500">Pay delivery charge upfront</p></div>
+                                </div>
+                            </div>
+                            <div id="bank-card" class="payment-card" onclick="document.getElementById('payment-bank').checked=true; updatePaymentSelection();">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="paymentMethod" value="bank" id="payment-bank" onchange="updatePaymentSelection()">
+                                    <div><i class="fa-solid fa-building-columns text-xl" style="color:#D4AF37;"></i><p class="font-bold text-sm">Bank Transfer <span class="discount-percent text-green-600 text-xs">(10% OFF)</span></p><p class="text-xs text-gray-500">Full payment after discount</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="summary-content" class="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-4 rounded-xl"></div>
+                    
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" id="confirm-terms" class="terms-checkbox mt-0.5">
+                        <span class="text-xs">I confirm I understand payment instructions. Payment details will be sent via WhatsApp. Order confirmed after payment slip verification.</span>
+                    </label>
+                    
+                    <button type="submit" id="submit-btn" disabled class="whatsapp-btn-disabled w-full text-white py-3 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i>Place Pre-Order via WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Image Gallery Modal -->
+    <div id="image-gallery-modal" class="modal-overlay">
+        <div class="modal-content max-w-2xl">
+            <div class="bg-gradient-to-r from-brand-dark to-brand text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
+                <h3 class="text-xl font-bold"><i class="fa-solid fa-images mr-2"></i><span id="gallery-product-title">Product Images</span></h3>
+                <button onclick="closeImageGallery()" class="text-white text-2xl hover:opacity-80">&times;</button>
+            </div>
+            <div class="p-6">
+                <div id="gallery-images-container" class="image-gallery-grid">
+                    <!-- Images loaded via JS -->
+                </div>
+                <p class="text-center text-sm text-gray-500 mt-4">Click any image to view full size</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div id="image-viewer-modal" class="modal-overlay">
+        <div class="modal-content max-w-3xl bg-transparent">
+            <div class="relative">
+                <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-3xl bg-black/50 w-12 h-12 rounded-full hover:bg-black/70 transition">&times;</button>
+                <img id="viewer-image" src="" alt="Product View" class="w-full rounded-2xl shadow-2xl">
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="modal-overlay">
+        <div class="modal-content max-w-5xl">
+            <div class="bg-gray-800 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
+                <h3 class="text-xl font-bold"><i class="fa-solid fa-user-shield mr-2"></i>Admin Panel</h3>
+                <button onclick="closeAdminModal()" class="text-white text-2xl">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="bg-blue-50 p-4 rounded-xl mb-6">
+                    <h4 class="font-bold text-blue-800 mb-2">Bank Discount %</h4>
+                    <div class="flex gap-3">
+                        <input type="number" id="discount-input" min="0" max="100" value="10" class="border rounded-lg p-2 w-24">
+                        <button onclick="saveDiscount()" class="bg-blue-600 text-white px-4 py-2 rounded-lg">Apply</button>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="font-bold mb-3">Add New Product</h4>
+                    <div class="grid md:grid-cols-3 gap-3">
+                        <input type="text" id="new-name" placeholder="Product Name *" class="form-input">
+                        <input type="number" id="new-price" placeholder="Selling Price (Rs) *" class="form-input">
+                        <input type="number" id="new-market-price" placeholder="Market Price (Rs)" class="form-input">
+                        <input type="number" id="new-delivery-days" placeholder="Delivery Days" class="form-input" min="1" max="14">
+                        <input type="text" id="new-weight" placeholder="Weight (e.g., 0.5 KG)" class="form-input">
+                        <input type="text" id="new-dimensions" placeholder="Dimensions (e.g., 12×4 cm)" class="form-input">
+                        <input type="text" id="new-image" placeholder="Main Image URL" class="form-input">
+                        <input type="text" id="new-images" placeholder="More Images (comma-separated URLs, max 2)" class="form-input md:col-span-2">
+                        <input type="text" id="new-warranty" placeholder="Warranty" class="form-input" value="No Warranty">
+                        <textarea id="new-desc" placeholder="Description * (Max 120 characters)" rows="2" maxlength="120" class="form-input md:col-span-3"></textarea>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">💡 Add up to 2 additional images separated by commas (total 3 images max)</p>
+                    <button onclick="addProduct()" class="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg">+ Add Product</button>
+                </div>
+                
+                <h4 class="font-bold mb-3">Products List</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border">
+                        <thead class="bg-gray-100">
+                            <tr><th class="p-2 text-left">ID</th><th class="p-2 text-left">Name</th><th class="p-2 text-left">Price</th><th class="p-2 text-left">Market</th><th class="p-2 text-left">Delivery</th><th class="p-2 text-left">Status</th><th class="p-2 text-left">Actions</th></tr>
+                        </thead>
+                        <tbody id="admin-products-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/94757424674" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-2xl hover:scale-110 transition-all z-50 floating-wa">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer with HIDDEN Admin Access -->
+    <footer class="bg-gray-900 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm text-gray-400">
+                © 2025 West Mart • Your Trust - Our Value
+            </p>
+            <p class="text-xs text-gray-600 mt-2">
+                Delivery: First 1kg Rs 350 • +Rs 50/kg
+            </p>
+            <div class="mt-3">
+                <span class="admin-trigger text-gray-700 text-xs" onclick="openAdminPanel()" title="System">
+                    <i class="fa-regular fa-copyright"></i>
+                </span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
