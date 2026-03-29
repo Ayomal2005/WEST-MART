@@ -151,7 +151,7 @@
 
 .reviews-track {
     display: flex;
-    animation: marquee 1200000s linear infinite;
+    animation: marquee 2s linear infinite;
     width: max-content;
 }
 
