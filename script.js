@@ -57,7 +57,7 @@ const productsCatalog = [
         weight: "0.15 KG",
         dimensions: "14×4×14 cm",
         description: "100% SAFE: This Tactical Knife Karambit Knife Trainer is perfect for learning how to use the real thing without all the cuts and bruising to the hands. The unsharpened blade of our practice karambit trainer will keep you away from danger as a beginner.",
-        image: "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp",
+        image: "https://i.ibb.co/C3DhqLkJ/real-cs-karambit-knife-g2-esports-irl-2000x2000.jpg",
         images: [
             "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp",
             "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp"
