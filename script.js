@@ -60,6 +60,7 @@ const productsCatalog = [
         image: "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp",
         images: [
             "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp",
+            "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp"
          
         ],
         inStock: true,
