@@ -26,10 +26,9 @@ const productsCatalog = [
         image: "https://i.ibb.co/PZmPXjCW/Gemini-Generated-Image-x6oguwx6oguwx6og.png",
         images: [
             "https://i.ibb.co/PZmPXjCW/Gemini-Generated-Image-x6oguwx6oguwx6og.png",
-            "https://placehold.co/600x600/2c3e50/ffffff?text=Knuckle+View+2",
-            "https://placehold.co/600x600/34495e/ffffff?text=Knuckle+View+3"
+           
         ],
-        inStock: true,
+        inStock: false,
         deliveryDays: 3,
         isPremium: true
     },
@@ -39,7 +38,7 @@ const productsCatalog = [
         basePrice: 1450,
         marketPrice: 1800,
         weight: "0.25 KG",
-        dimensions: "18x14x14 cm",
+        dimensions: "18×14×14 cm",
         description: "PERFECTLY PROTECTS YOUR EYES: By using this open face goggle mask, you can conveniently protect your eyes from harmful rays at the same time get a unobstructed and clear view during motorcycling or skiing.",
         image: "https://bandidospitstop.com/cdn/shop/products/bsd09014.jpg?v=1755631247&width=1214",
         images: [
@@ -52,33 +51,34 @@ const productsCatalog = [
     },
     {
         id: "3",
-        name: "Multi-Tool Survival Card 12-in-1",
-        basePrice: 990,
-        marketPrice: 1500,
-        weight: "0.05 KG",
-        dimensions: "8.5×5.4 cm",
-        description: "Credit-card sized multi-tool with 12 functions including bottle opener, wrench, screwdriver, ruler, and more. Perfect for wallet EDC.",
-        image: "https://placehold.co/400x400/34495e/ffffff?text=Survival+Card",
+        name: "Karambit Knife",
+        basePrice: 1400,
+        marketPrice: 1700,
+        weight: "0.15 KG",
+        dimensions: "14×4×14 cm",
+        description: "100% SAFE: This Tactical Knife Karambit Knife Trainer is perfect for learning how to use the real thing without all the cuts and bruising to the hands. The unsharpened blade of our practice karambit trainer will keep you away from danger as a beginner.",
+        image: "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp",
         images: [
-            "https://placehold.co/600x600/34495e/ffffff?text=Survival+Card",
-            "https://placehold.co/600x600/2c3e50/ffffff?text=Card+Functions"
+            "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp",
+         
         ],
         inStock: true,
-        deliveryDays: 3,
-        isPremium: false
+        deliveryDays: 5,
+        isPremium: true
     },
     {
         id: "4",
-        name: "Royal Bloom Sunshine Paradise Exotic Vase Arrangement",
-        basePrice: 2100,
-        marketPrice: 3200,
-        weight: "0.22 KG",
-        dimensions: "32×18 cm",
-        description: "Bring sunshine and joy with this vibrant floral display featuring radiant yellow roses and blue-sprayed hydrangeas. Perfect for any special occasion, same-day freshness.",
-        image: "https://static2.kapruka.com/product-image/width=500,quality=93,f=auto/shops/flowershop/flowerImages/zooms/1755782766806_dsc01596.jpg",
+        name: "Devil Eye Car Light ",
+        basePrice: 1900,
+        marketPrice: 2400,
+        weight: "0.15 KG",
+        dimensions: "12×10×10 cm",
+        description: "Elevate your car's appearance with demon eyes featuring various display modes,bright LED lights,and captivating patterns that are sure to turn heads.demon eyes are designed for safe and minimal heat generation,utilizing touch control and upgraded 5V USB voltage technology..",
+        image: "https://laz-img-sg.alicdn.com/p/caf44df53d3b9d790ed2cf0a238815bb.jpg",
         images: [
-            "https://static2.kapruka.com/product-image/width=500,quality=93,f=auto/shops/flowershop/flowerImages/zooms/1755782766806_dsc01596.jpg",
-            "https://static2.kapruka.com/product-image/width=500,quality=93,f=auto/shops/flowershop/flowerImages/zooms/1755782766806_dsc01596.jpg"
+            "https://laz-img-sg.alicdn.com/p/caf44df53d3b9d790ed2cf0a238815bb.jpg",
+            "https://m.media-amazon.com/images/I/41rbWYNNCDL._QL92_SH45_SS200_.jpg",
+            "https://rukminim2.flixcart.com/image/480/640/xif0q/car-fancy-light/q/m/u/2-5-xl-size-led-winking-devil-eyes-for-car-trucks-windows-original-imah8zqfjyxbg45s.jpeg?q=80"
         ],
         inStock: true,
         deliveryDays: 2,
