@@ -376,7 +376,7 @@ function submitOrder(e) {
 • You'll receive tracking details via WhatsApp
 • Estimated delivery: ${p.deliveryDays} business days
 
-✅ *Status Updates:* We'll notify you at every step - payment received → order processing → dispatched → out for delivery → delivered!`;
+✅ *Status Updates:* We'll notify you at  - payment received → dispatched!`;
     } else {
         total = (p.basePrice * qty) + df;
         const upfrontAmount = df;
