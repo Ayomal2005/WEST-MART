@@ -16,7 +16,7 @@ function calculateDeliveryFee(weightStr) {
 // ==================== PRODUCT CATALOG ====================
 const productsCatalog = [
     {
-        id: "knuckle-1",
+        id: "1",
         name: "Tactical Multi-Color Knuckle Tool",
         basePrice: 1600,
         marketPrice: 2200,
@@ -34,24 +34,24 @@ const productsCatalog = [
         isPremium: true
     },
     {
-        id: "tactical-pen-1",
-        name: "Tactical Aerospace Aluminum Pen",
-        basePrice: 1250,
+        id: "2",
+        name: "Motorcycle Goggles Face Mask",
+        basePrice: 1450,
         marketPrice: 1800,
-        weight: "0.08 KG",
-        dimensions: "14×1.2 cm",
-        description: "Sleek tactical pen with tungsten steel tip. Writes smoothly, breaks windows in emergencies. Aerospace-grade aluminum, includes ink refill.",
-        image: "https://placehold.co/400x400/2c3e50/ffffff?text=Tactical+Pen",
+        weight: "0.25 KG",
+        dimensions: "18x14x14 cm",
+        description: "PERFECTLY PROTECTS YOUR EYES: By using this open face goggle mask, you can conveniently protect your eyes from harmful rays at the same time get a unobstructed and clear view during motorcycling or skiing.",
+        image: "https://bandidospitstop.com/cdn/shop/products/bsd09014.jpg?v=1755631247&width=1214",
         images: [
-            "https://placehold.co/600x600/2c3e50/ffffff?text=Tactical+Pen",
-            "https://placehold.co/600x600/34495e/ffffff?text=Pen+Detail"
+            "https://bandidospitstop.com/cdn/shop/products/bsd09014.jpg?v=1755631247&width=1214",
+          
         ],
         inStock: true,
-        deliveryDays: 3,
+        deliveryDays: 5,
         isPremium: false
     },
     {
-        id: "edc-card-1",
+        id: "3",
         name: "Multi-Tool Survival Card 12-in-1",
         basePrice: 990,
         marketPrice: 1500,
@@ -68,7 +68,7 @@ const productsCatalog = [
         isPremium: false
     },
     {
-        id: "royal-bloom-1",
+        id: "4",
         name: "Royal Bloom Sunshine Paradise Exotic Vase Arrangement",
         basePrice: 2100,
         marketPrice: 3200,
