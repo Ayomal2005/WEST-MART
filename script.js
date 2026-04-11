@@ -17,8 +17,8 @@ function calculateDeliveryFee(weightStr) {
 const productsCatalog = [
     {
         id: "1",
-        name: "Tactical Multi-Color Knuckle Tool",
-        basePrice: 1600,
+        name: "Multi-Color Knuckle Tool",
+        basePrice: 1700,
         marketPrice: 2200,
         weight: "0.2 KG",
         dimensions: "11×5×3 cm",
