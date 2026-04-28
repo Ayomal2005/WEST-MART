@@ -29,7 +29,7 @@ const productsCatalog = [
            
         ],
         inStock: true,
-        deliveryDays: 3,
+        deliveryDays: 5,
         isPremium: true
     },
     {
@@ -40,9 +40,9 @@ const productsCatalog = [
         weight: "0.1 KG",
         dimensions: "12×5×1 cm",
         description: "Powerful Sink & Drain Cleaner gets the job done by dissolving grease,hair,paper,soap scum,oil and organic matter easily.",
-        image: "https://bandidospitstop.com/cdn/shop/products/bsd09014.jpg?v=1755631247&width=1214",
+        image: "https://share.google/uSCNssK9wPqsO98lw",
         images: [
-            "https://bandidospitstop.com/cdn/shop/products/bsd09014.jpg?v=1755631247&width=1214",
+            "https://share.google/uSCNssK9wPqsO98lw",
           
         ],
         inStock: true,
