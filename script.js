@@ -1,6 +1,6 @@
 // ==================== DELIVERY CONFIG ====================
 let bankDiscountPercent = 10;
-let baseDeliveryFee = 350;
+let baseDeliveryFee = 400;
 
 function calculateDeliveryFee(weightStr) {
     let weight = 0;
@@ -28,18 +28,18 @@ const productsCatalog = [
             "https://i.ibb.co/PZmPXjCW/Gemini-Generated-Image-x6oguwx6oguwx6og.png",
            
         ],
-        inStock: false,
+        inStock: true,
         deliveryDays: 3,
         isPremium: true
     },
     {
         id: "2",
-        name: "Motorcycle Goggles Face Mask",
-        basePrice: 1450,
-        marketPrice: 1800,
-        weight: "0.25 KG",
-        dimensions: "18×14×14 cm",
-        description: "PERFECTLY PROTECTS YOUR EYES: By using this open face goggle mask, you can conveniently protect your eyes from harmful rays at the same time get a unobstructed and clear view during motorcycling or skiing.",
+        name: "Sink & Drain Cleaner",
+        basePrice: 600,
+        marketPrice: 990,
+        weight: "0.1 KG",
+        dimensions: "12×5×1 cm",
+        description: "Powerful Sink & Drain Cleaner gets the job done by dissolving grease,hair,paper,soap scum,oil and organic matter easily.",
         image: "https://bandidospitstop.com/cdn/shop/products/bsd09014.jpg?v=1755631247&width=1214",
         images: [
             "https://bandidospitstop.com/cdn/shop/products/bsd09014.jpg?v=1755631247&width=1214",
@@ -63,7 +63,7 @@ const productsCatalog = [
             "https://knify.gg/medias/2024/11/real-cs-karambit-knife-g2-esports-irl-2000x2000.webp"
          
         ],
-        inStock: true,
+        inStock: false,
         deliveryDays: 5,
         isPremium: true
     },
@@ -81,7 +81,7 @@ const productsCatalog = [
             "https://m.media-amazon.com/images/I/41rbWYNNCDL._QL92_SH45_SS200_.jpg",
             "https://rukminim2.flixcart.com/image/480/640/xif0q/car-fancy-light/q/m/u/2-5-xl-size-led-winking-devil-eyes-for-car-trucks-windows-original-imah8zqfjyxbg45s.jpeg?q=80"
         ],
-        inStock: true,
+        inStock: false,
         deliveryDays: 2,
         isPremium: true
     }
