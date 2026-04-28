@@ -40,9 +40,9 @@ const productsCatalog = [
         weight: "0.1 KG",
         dimensions: "12×5×1 cm",
         description: "Powerful Sink & Drain Cleaner gets the job done by dissolving grease,hair,paper,soap scum,oil and organic matter easily.",
-        image: "https://share.google/uSCNssK9wPqsO98lw",
+        image: "https://i.ibb.co/tp1nj86z/61-F3-Ai-OE6-PL-AC-SL1000.jpg",
         images: [
-            "https://share.google/uSCNssK9wPqsO98lw",
+            "https://i.ibb.co/tp1nj86z/61-F3-Ai-OE6-PL-AC-SL1000.jpg",
           
         ],
         inStock: true,
